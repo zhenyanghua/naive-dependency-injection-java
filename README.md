@@ -4,6 +4,7 @@
 ```java
 public class Main {
 
+    // Define full class path including package name of the class
     private static final String PKG_DEPOSIT_DAO = "io.hua.test.DepositDao";
     private static final String PKG_DEPOSIT_SERVICE = "io.hua.test.DepositService";
 
@@ -50,8 +51,8 @@ public class Main {
 
 |Methods|Description|
 |-------|-----------|
-|**getClassName()**|Type: `String` - The instances of which to be managed.|
-|**getDependencies()**|Type: `[String, <...>]` - An array of dependent classes.|
+|**getClassName()**|Type: `String` - The instances of which to be managed. String value ust be full class path including package name.|
+|**getDependencies()**|Type: `[String, <...>]` - An array of dependent classes. String value must be full class path including package name.|
 |**getScope()**|Type: `Scope` - the scope of the class instance. Defaults to `Scope.Singleton`.|
 
 ### Scope Enum
