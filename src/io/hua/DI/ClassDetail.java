@@ -1,4 +1,4 @@
-package io.hua;
+package io.hua.DI;
 
 public class ClassDetail {
     private String className;

@@ -1,4 +1,4 @@
-package io.hua;
+package io.hua.DI;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -8,16 +8,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Container
- */
-public class Container {
-    private static Container context;
+public class ApplicationContext {
+    private static ApplicationContext context;
     private Map<Class<?>, ClassDetail> classes = new HashMap<>();
     private Map<Class<?>, Object> instances = new HashMap<>();
     private Map<Class<?>, Set<Class<?>>> classInterfaces = new HashMap<>();
 
-    private Container(final ClassDetail[] details) throws ClassNotFoundException {
+    private ApplicationContext(final ClassDetail[] details) throws ClassNotFoundException {
         for (final ClassDetail detail: details) {
             final Class<?> clazz = Class.forName(detail.getClassName());
 
@@ -27,33 +24,14 @@ public class Container {
         }
     }
 
-    /**
-     * getContext
-     * @param details
-     * @return
-     * @throws ClassNotFoundException
-     * @apiNote Factory method to return the single context object.
-     */
-    public static Container getContext(final ClassDetail[] details) throws ClassNotFoundException {
+    public static ApplicationContext getContext(final ClassDetail[] details) throws ClassNotFoundException {
         if (context == null) {
-            context = new Container(details);
+            context = new ApplicationContext(details);
             System.out.println("This creates a context singleton.");
         }
         return context;
     }
 
-    /**
-     * getInstance
-     * @param clazz
-     * @param <T>
-     * @return
-     * @throws ClassNotFoundException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @apiNote Uses reflection to create class instances
-     */
     public <T> T getInstance(final Class<T> clazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         final Class<?> implClass = getImplementationClass(clazz);

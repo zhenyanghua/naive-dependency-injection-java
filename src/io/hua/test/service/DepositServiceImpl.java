@@ -1,7 +1,7 @@
-package io.hua.test;
+package io.hua.test.service;
 
-import io.hua.test.interfaces.DepositDao;
-import io.hua.test.interfaces.DepositService;
+import io.hua.test.domain.Deposit;
+import io.hua.test.dao.DepositDao;
 
 public class DepositServiceImpl implements DepositService {
     private DepositDao depositDao;
@@ -11,7 +11,7 @@ public class DepositServiceImpl implements DepositService {
         System.out.println("This creates an instance of the DepositService class. ");
     }
 
-    public void createDeposit(float deposit) {
+    public void createDeposit(Deposit deposit) {
         depositDao.createDeposit(deposit);
     }
 }

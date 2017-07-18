@@ -1,7 +1,11 @@
-# Naive Implementation of Dependency Injection in Java
+package io.hua.test;
 
-## Usage
-```java
+import io.hua.DI.ApplicationContext;
+import io.hua.DI.ClassDetail;
+import io.hua.DI.Scope;
+import io.hua.test.domain.Deposit;
+import io.hua.test.service.DepositService;
+
 public class Main {
 
     private static final String PKG_DEPOSIT_DAO = "io.hua.test.dao.DepositDaoImpl";
@@ -38,31 +42,3 @@ public class Main {
         }
     }
 }
-```
-
-## API
-### ApplicationContext Class
-|Methods|Description|
-|-------|-----------|
-|**getContext()**|Return Value: `ApplicationContext` - Fetches the singleton context that manages all registered class instances.|
-|**getClass()**|Return Value: `Class<T>` - Fetches the scoped instance of the class.|
-
-### ClassDetail Class
-|Constructors|Description|
-|-----------|-----------|
-|**ClassDetail(final String className)**|constructor method|
-|**ClassDetail(final String className, final String[] dependencies)**|constructor method|
-|**ClassDetail(final String className, final Scope scope)**|constructor method|
-|**ClassDetail(final String className, final String[] dependencies, final Scope scope)**|constructor method|
-
-|Methods|Description|
-|-------|-----------|
-|**getClassName()**|Type: `String` - The instances of which to be managed. String value ust be full class path including package name.|
-|**getDependencies()**|Type: `[String, <...>]` - An array of dependent classes. String value must be full class path including package name.|
-|**getScope()**|Type: `Scope` - the scope of the class instance. Defaults to `Scope.Singleton`.|
-
-### Scope Enum
-|Values|Description|
-|------|-----------|
-|Singleton|This creates only one shared instance in the container context.|
-|Prototype|This creates a new instance in the container context every time when an instance is fetched.|
