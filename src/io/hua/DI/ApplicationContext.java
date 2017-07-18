@@ -35,6 +35,7 @@ public class ApplicationContext {
     public <T> T getInstance(final Class<T> clazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         final Class<?> implClass = getImplementationClass(clazz);
+
         if (classes.get(implClass).getScope() == Scope.Prototype)
             return newInstance(implClass);
 
