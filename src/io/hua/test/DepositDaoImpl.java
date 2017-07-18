@@ -1,7 +1,9 @@
 package io.hua.test;
 
-public class DepositDao {
-    public DepositDao() {
+import io.hua.test.interfaces.DepositDao;
+
+public class DepositDaoImpl implements DepositDao {
+    public DepositDaoImpl() {
         System.out.println("This creates an instance of the DepositDao class.");
     }
 

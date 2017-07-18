@@ -1,13 +1,15 @@
 package io.hua;
 
-import io.hua.test.DepositService;
+import io.hua.test.DepositServiceImpl;
+import io.hua.test.interfaces.DepositDao;
+import io.hua.test.interfaces.DepositService;
 
 import java.lang.reflect.InvocationTargetException;
 
 public class Main {
 
-    private static final String PKG_DEPOSIT_DAO = "io.hua.test.DepositDao";
-    private static final String PKG_DEPOSIT_SERVICE = "io.hua.test.DepositService";
+    private static final String PKG_DEPOSIT_DAO = "io.hua.test.DepositDaoImpl";
+    private static final String PKG_DEPOSIT_SERVICE = "io.hua.test.DepositServiceImpl";
 
     public static void main(String[] args) {
 

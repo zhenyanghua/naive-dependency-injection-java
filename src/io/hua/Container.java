@@ -2,8 +2,11 @@ package io.hua;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Container
@@ -12,11 +15,14 @@ public class Container {
     private static Container context;
     private Map<Class<?>, ClassDetail> classes = new HashMap<>();
     private Map<Class<?>, Object> instances = new HashMap<>();
+    private Map<Class<?>, Set<Class<?>>> classInterfaces = new HashMap<>();
 
     private Container(final ClassDetail[] details) throws ClassNotFoundException {
         for (ClassDetail detail: details) {
-            classes.put(Class.forName(detail.getClassName()), detail);
-            instances.put(Class.forName(detail.getClassName()), null);
+            Class<?> clazz = Class.forName(detail.getClassName());
+            classes.put(clazz, detail);
+            instances.put(clazz, null);
+            classInterfaces.put(clazz, new HashSet<>(Arrays.asList(clazz.getInterfaces())));
         }
     }
 
@@ -48,33 +54,63 @@ public class Container {
      * @apiNote Uses reflection to create class instances
      */
     public <T> T getInstance(final Class<T> clazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        if (!classes.containsKey(clazz))
-            throw new ClassNotFoundException();
 
-        if (classes.get(clazz).getScope() == Scope.Prototype)
-            return newInstance(clazz);
+        Class<?> implClass = getImplementationClass(clazz);
+        if (classes.get(implClass).getScope() == Scope.Prototype)
+            return newInstance(implClass);
 
-        if (instances.get(clazz) == null) {
-            T instance = newInstance(clazz);
-            instances.put(clazz, instance);
+        if (instances.get(implClass) == null) {
+            T instance = newInstance(implClass);
+            instances.put(implClass, instance);
         }
 
-        return clazz.cast(instances.get(clazz));
+        return clazz.cast(instances.get(implClass));
     }
 
-    private <T> T newInstance(final Class<T> clazz) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private <T> T newInstance(final Class<?> clazz) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         String[] dependentClassNames = classes.get(clazz).getDependencies();
         Object[] dependentInstances = new Object[dependentClassNames.length];
         Class<?>[] dependentClasses = new Class[dependentClassNames.length];
 
         for(int i = 0; i < dependentInstances.length; i++) {
             final String dependentClassName = dependentClassNames[i];
+            final Class<?> dependentClass = Class.forName(dependentClassName);
+            final Class<?>[] interfaces = dependentClass.getInterfaces();
+            String[] interfaceNames = Arrays.stream(interfaces).map(Class::getName).toArray(String[]::new);
 
-            dependentClasses[i] = Class.forName(dependentClassName);
+            dependentClasses[i] = Class.forName(guessClassInterface(dependentClassName, interfaceNames));
             dependentInstances[i] = getInstance(dependentClasses[i]);
         }
 
-        Constructor<T> ctr = clazz.getConstructor(dependentClasses);
-        return ctr.newInstance(dependentInstances);
+        Constructor<?> ctr = clazz.getConstructor(dependentClasses);
+        return (T) ctr.newInstance(dependentInstances);
+    }
+
+    private <T> Class<?> getImplementationClass(final Class<T> clazz) throws ClassNotFoundException {
+        for (Map.Entry<Class<?>, Set<Class<?>>> entry:classInterfaces.entrySet()) {
+            if (entry.getValue().contains(clazz)) {
+                return entry.getKey();
+            }
+        }
+
+        if (!classes.containsKey(clazz))
+            throw new ClassNotFoundException();
+
+        return clazz;
+    }
+
+    private String guessClassInterface(String implClassName, String[] interfaceNames) {
+        final String simpleImplClassName = getSimpleClassNameFromString(implClassName)
+            .toLowerCase().replace("impl", "");
+        for (String interfaceName: interfaceNames) {
+            if (getSimpleClassNameFromString(interfaceName).toLowerCase().contains(simpleImplClassName))
+                return interfaceName;
+        }
+        return implClassName;
+    }
+
+    private String getSimpleClassNameFromString(String className) {
+        final String[] classNameArray = className.split("\\.");
+        return classNameArray[classNameArray.length - 1];
     }
 }
