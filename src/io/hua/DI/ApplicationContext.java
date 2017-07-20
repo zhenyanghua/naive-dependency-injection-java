@@ -29,6 +29,7 @@ public class ApplicationContext {
             context = new ApplicationContext(details);
             System.out.println("This creates a context singleton.");
         }
+
         return context;
     }
 
@@ -63,6 +64,7 @@ public class ApplicationContext {
         }
 
         final Constructor<?> ctr = clazz.getConstructor(dependentClasses);
+
         return (T) ctr.newInstance(dependentInstances);
     }
 
@@ -82,15 +84,18 @@ public class ApplicationContext {
     private String guessClassInterface(final String implClassName, final String[] interfaceNames) {
         final String simpleImplClassName = getSimpleClassNameFromString(implClassName)
             .toLowerCase().replace("impl", "");
+
         for (final String interfaceName: interfaceNames) {
             if (getSimpleClassNameFromString(interfaceName).toLowerCase().contains(simpleImplClassName))
                 return interfaceName;
         }
+
         return implClassName;
     }
 
     private String getSimpleClassNameFromString(final String className) {
         final String[] classNameArray = className.split("\\.");
+
         return classNameArray[classNameArray.length - 1];
     }
 }
