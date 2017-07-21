@@ -26,6 +26,10 @@
 
 ## Do It Yourself
 
+**Features used**:
+- Reflection
+- Generics
+
 ### 1. Create a class configuration plain old java object
 ```java
 public class ClassDetail {
@@ -73,6 +77,7 @@ public class ApplicationContext {
             context = new ApplicationContext(details);
             System.out.println("This creates a context singleton.");
         }
+        
         return context;
     }
 }
@@ -94,6 +99,7 @@ public class ApplicationContext {
         // Lazy loading
         if (instances.get(implClass) == null) {
             final T instance = newInstance(implClass);
+            
             instances.put(implClass, instance);
         }
 
@@ -118,6 +124,7 @@ public class ApplicationContext {
         
         // Reflectively create instances which suites all JVM environment.
         final Constructor<?> ctr = clazz.getConstructor(dependentClasses);
+        
         return (T) ctr.newInstance(dependentInstances);
     }
 
@@ -133,5 +140,8 @@ public class ApplicationContext {
 1. [Spring Framework Reference Document](https://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/)
 2. [Getting started with Spring Framework: Third Edition](https://www.amazon.com/Getting-started-Spring-Framework-Third-ebook/dp/B01HZXQFUS/ref=sr_1_1?ie=UTF8&qid=1500389139&sr=8-1&keywords=spring+framework)
 3. [Introduction to Contexts and Dependency Injection for Java EE](https://docs.oracle.com/javaee/7/tutorial/cdi-basic.htm)
+4. [Java Generics](https://docs.oracle.com/javase/tutorial/java/generics/index.html)
+4. [Java Reflection](https://docs.oracle.com/javase/tutorial/reflect/)
+4. [Java Method Reference](https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html)
 4. This presentation source code - [https://goo.gl/V1SVgE](https://github.com/zhenyanghua/naive-dependency-injection-java)
 
