@@ -61,7 +61,6 @@ public class ApplicationContext {
             final Class<?> clazz = Class.forName(detail.getClassName());
 
             classes.put(clazz, detail);
-            instances.put(clazz, null);
             classInterfaces.put(clazz, new HashSet<>(Arrays.asList(clazz.getInterfaces())));
         }
     }
@@ -90,23 +89,22 @@ public class ApplicationContext {
     public <T> T getInstance(final Class<T> clazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
     
         // Find and use class implementation if it has one, otherwise use the original class.
-        final Class<?> implClass = getImplementationClass(clazz);
+        final Class<T> implClass = getImplementationClass(clazz);
         
         // If scope is prototype, it will create a new instance every time.
         if (classes.get(implClass).getScope() == Scope.Prototype)
             return newInstance(implClass);
 
         // Lazy loading
-        if (instances.get(implClass) == null) {
+        if (!instances.containsKey(implClass)) {
             final T instance = newInstance(implClass);
-            
             instances.put(implClass, instance);
         }
 
         return clazz.cast(instances.get(implClass));
     }
     
-    private <T> T newInstance(final Class<?> clazz) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private <T> T newInstance(final Class<T> clazz) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         // Traverse dependent classes to find their dependency recursively, and use class implementation if they have one.
         final String[] dependentClassNames = classes.get(clazz).getDependencies();
         final Object[] dependentInstances = new Object[dependentClassNames.length];
@@ -123,12 +121,12 @@ public class ApplicationContext {
         }
         
         // Reflectively create instances which suites all JVM environment.
-        final Constructor<?> ctr = clazz.getConstructor(dependentClasses);
+        final Constructor<T> ctr = clazz.getConstructor(dependentClasses);
         
-        return (T) ctr.newInstance(dependentInstances);
+        return ctr.newInstance(dependentInstances);
     }
 
-    private <T> Class<?> getImplementationClass(final Class<T> clazz) throws ClassNotFoundException { /*...*/ }
+    private <T> Class<T> getImplementationClass(final Class<T> clazz) throws ClassNotFoundException { /*...*/ }
 
     private String guessClassInterface(final String implClassName, final String[] interfaceNames) { /*...*/ }
 

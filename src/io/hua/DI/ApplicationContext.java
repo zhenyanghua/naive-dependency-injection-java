@@ -34,7 +34,7 @@ public class ApplicationContext {
 
     public <T> T getInstance(final Class<T> clazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
-        final Class<?> implClass = getImplementationClass(clazz);
+        final Class<T> implClass = getImplementationClass(clazz);
 
         if (classes.get(implClass).getScope() == Scope.Prototype)
             return newInstance(implClass);
@@ -47,7 +47,7 @@ public class ApplicationContext {
         return clazz.cast(instances.get(implClass));
     }
 
-    private <T> T newInstance(final Class<?> clazz) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private <T> T newInstance(final Class<T> clazz) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         final String[] dependentClassNames = classes.get(clazz).getDependencies();
         final Object[] dependentInstances = new Object[dependentClassNames.length];
         final Class<?>[] dependentClasses = new Class[dependentClassNames.length];
@@ -62,15 +62,20 @@ public class ApplicationContext {
             dependentInstances[i] = getInstance(dependentClasses[i]);
         }
 
-        final Constructor<?> ctr = clazz.getConstructor(dependentClasses);
+        final Constructor<T> ctr = clazz.getConstructor(dependentClasses);
 
-        return (T) ctr.newInstance(dependentInstances);
+        return ctr.newInstance(dependentInstances);
     }
 
-    private <T> Class<?> getImplementationClass(final Class<T> clazz) throws ClassNotFoundException {
+    // Because each entry value - interfaces set is derived from the entry key implementation Class,
+    // and if the interface contains the passed class, then the implementation class is a subset
+    // of the passed class type, we can safely cast it to the passed class type. Hence, suppress the
+    // unchecked type cast warning.
+    @SuppressWarnings("unchecked")
+    private <T> Class<T> getImplementationClass(final Class<T> clazz) throws ClassNotFoundException {
         for (Map.Entry<Class<?>, Set<Class<?>>> entry:classInterfaces.entrySet()) {
             if (entry.getValue().contains(clazz)) {
-                return entry.getKey();
+                return (Class<T>) entry.getKey();
             }
         }
 
