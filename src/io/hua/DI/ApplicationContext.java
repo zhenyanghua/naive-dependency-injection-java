@@ -19,7 +19,6 @@ public class ApplicationContext {
             final Class<?> clazz = Class.forName(detail.getClassName());
 
             classes.put(clazz, detail);
-            instances.put(clazz, null);
             classInterfaces.put(clazz, new HashSet<>(Arrays.asList(clazz.getInterfaces())));
         }
     }
@@ -40,7 +39,7 @@ public class ApplicationContext {
         if (classes.get(implClass).getScope() == Scope.Prototype)
             return newInstance(implClass);
 
-        if (instances.get(implClass) == null) {
+        if (!instances.containsKey(implClass)) {
             final T instance = newInstance(implClass);
             instances.put(implClass, instance);
         }
