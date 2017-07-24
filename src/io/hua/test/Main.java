@@ -22,7 +22,7 @@ public class Main {
         };
 
         try {
-            // Get the context singleton through the factory method.
+            // Get the context singleton and initialize it by registering all classes.
             ApplicationContext context = ApplicationContext.CONTEXT;
             context.init(classDetails);
 
