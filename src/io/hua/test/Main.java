@@ -23,7 +23,8 @@ public class Main {
 
         try {
             // Get the context singleton through the factory method.
-            ApplicationContext context = ApplicationContext.getContext(classDetails);
+            ApplicationContext context = ApplicationContext.CONTEXT;
+            context.init(classDetails);
 
             // Call getInstance method
             DepositService depositService_1 = context.getInstance(DepositService.class);

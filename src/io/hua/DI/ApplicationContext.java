@@ -8,28 +8,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ApplicationContext {
-    private static ApplicationContext context;
+public enum ApplicationContext {
+    CONTEXT;
+
     private Map<Class<?>, ClassDetail> classes = new HashMap<>();
     private Map<Class<?>, Object> instances = new HashMap<>();
     private Map<Class<?>, Set<Class<?>>> classInterfaces = new HashMap<>();
 
-    private ApplicationContext(final ClassDetail[] details) throws ClassNotFoundException {
+    public void init(final ClassDetail[] details) throws ClassNotFoundException {
         for (final ClassDetail detail: details) {
             final Class<?> clazz = Class.forName(detail.getClassName());
 
             classes.put(clazz, detail);
             classInterfaces.put(clazz, new HashSet<>(Arrays.asList(clazz.getInterfaces())));
         }
-    }
-
-    public static ApplicationContext getContext(final ClassDetail[] details) throws ClassNotFoundException {
-        if (context == null) {
-            context = new ApplicationContext(details);
-            System.out.println("This creates a context singleton.");
-        }
-
-        return context;
     }
 
     public <T> T getInstance(final Class<T> clazz) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
