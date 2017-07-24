@@ -18,8 +18,9 @@ public class Main {
         };
 
         try {
-            // Get the context singleton through the factory method.
-            ApplicationContext context = ApplicationContext.getContext(classDetails);
+            // Get the context singleton and initialize it by registering all classes.
+            ApplicationContext context = ApplicationContext.CONTEXT;
+            context.init(classDetails);
 
             // Call getInstance method
             DepositService depositService_1 = context.getInstance(DepositService.class);
@@ -41,10 +42,14 @@ public class Main {
 ```
 
 ## API
-### ApplicationContext Class
+### ApplicationContext Singleton Class
+|Values|Description|
+|------|-----------|
+|**CONTEXT**|The singleton instance of the class|
+
 |Methods|Description|
 |-------|-----------|
-|**getContext()**|Return Value: `ApplicationContext` - Fetches the singleton context that manages all registered class instances.|
+|**init(final ClassDetail[] details)**|Return Value: `void` - Initializes the context by registering all passed classes.|
 |**getClass()**|Return Value: `Class<T>` - Fetches the scoped instance of the class.|
 
 ### ClassDetail Class
@@ -64,5 +69,5 @@ public class Main {
 ### Scope Enum
 |Values|Description|
 |------|-----------|
-|Singleton|This creates only one shared instance in the container context.|
-|Prototype|This creates a new instance in the container context every time when an instance is fetched.|
+|**Singleton**|This creates only one shared instance in the container context.|
+|**Prototype**|This creates a new instance in the container context every time when an instance is fetched.|
