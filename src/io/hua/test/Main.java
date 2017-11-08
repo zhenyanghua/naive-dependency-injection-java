@@ -9,6 +9,7 @@ import io.hua.test.service.DepositService;
 public class Main {
 
     private static final String PKG_DEPOSIT_DAO = "io.hua.test.dao.DepositDaoImpl";
+//    private static final String PKG_DEPOSIT_DAO = "io.hua.test.dao.DepositDaoAnotherImpl";
     private static final String PKG_DEPOSIT_SERVICE = "io.hua.test.service.DepositServiceImpl";
     private static final String PKG_DEPOSIT = "io.hua.test.domain.Deposit";
 

@@ -82,7 +82,7 @@ public enum ApplicationContext {
             .toLowerCase().replace("impl", "");
 
         for (final String interfaceName: interfaceNames) {
-            if (getSimpleClassNameFromString(interfaceName).toLowerCase().contains(simpleImplClassName))
+            if (simpleImplClassName.contains(getSimpleClassNameFromString(interfaceName).toLowerCase()))
                 return interfaceName;
         }
 
